@@ -1,7 +1,6 @@
 language: c
 install:
-  - sudo apt-get update
-  - sudo apt-get install lcov curl
+  - sudo apt-get install curl
 script:
   - mkdir build && cd build
   - cmake -DCOVERALLS=ON ..
