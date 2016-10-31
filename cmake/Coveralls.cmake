@@ -8,6 +8,10 @@ function(code_coverage _COVERAGE_SRCS _COVERALLS_UPLOAD _CMAKE_SCRIPT_PATH)
     # clean previous gcov data.
     file(REMOVE_RECURSE ${PROJECT_BINARY_DIR}/*.gcda)
 
+    find_program(GCOV_EXECUTABLE gcov)
+    if (NOT GCOV_EXECUTABLE)
+	    message(FATAL_ERROR "gcov not found! Aborting...")
+    endif()
     # find curl for upload JSON soon.
     if (_COVERALLS_UPLOAD)
         find_program(CURL_EXECUTABLE curl)
@@ -16,16 +20,9 @@ function(code_coverage _COVERAGE_SRCS _COVERALLS_UPLOAD _CMAKE_SCRIPT_PATH)
         endif()
     endif()
 
-	# When passing a CMake list to an external process, the list
-	# will be converted from the format "1;2;3" to "1 2 3".
-	set(COVERAGE_SRCS "")
-	foreach (SINGLE_SRC ${_COVERAGE_SRCS})
-        set(COVERAGE_SRCS "${COVERAGE_SRCS}*${SINGLE_SRC}")
-	endforeach()
-
     # coveralls json file.
 	set(COVERALLS_FILE ${PROJECT_BINARY_DIR}/coveralls.json)
-
+    set(COVERAGE_SRCS ${_COVERAGE_SRCS})
  	add_custom_target(coveralls_generate
         # Run regress tests.
         COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
