@@ -40,6 +40,12 @@
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
+# Since it's not possible to pass a CMake list properly in the		
+# "1;2;3" format to an external process, we have replaced the		
+# ";" with "*", so reverse that here so we get it back into the		
+# CMake list format.		
+string(REGEX REPLACE "\\*" ";" COVERAGE_SRCS ${COVERAGE_SRCS})
+
 ############################# Macros #########################################
 #
 # This macro converts from the full path format gcov outputs:

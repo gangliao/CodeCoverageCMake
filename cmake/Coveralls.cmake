@@ -19,10 +19,16 @@ function(code_coverage _COVERAGE_SRCS _COVERALLS_UPLOAD _CMAKE_SCRIPT_PATH)
             message(FATAL_ERROR "Coveralls: curl not found!")
         endif()
     endif()
+    
+    # When passing a CMake list to an external process, the list		
+    # will be converted from the format "1;2;3" to "1 2 3".		
+    set(COVERAGE_SRCS "")		
+    foreach (SINGLE_SRC ${_COVERAGE_SRCS})		
+        set(COVERAGE_SRCS "${COVERAGE_SRCS}*${SINGLE_SRC}")		
+    endforeach()
 
     # coveralls json file.
 	set(COVERALLS_FILE ${PROJECT_BINARY_DIR}/coveralls.json)
-    set(COVERAGE_SRCS ${_COVERAGE_SRCS})
  	add_custom_target(coveralls_generate
         # Run regress tests.
         COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
