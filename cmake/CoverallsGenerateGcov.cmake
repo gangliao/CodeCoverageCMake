@@ -37,16 +37,79 @@
 #         -DCOVERAGE_SRCS="catcierge_rfid.c;catcierge_timer.c" 
 #         -P ../cmake/CoverallsGcovUpload.cmake
 #
-
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
-# Since it's not possible to pass a CMake list properly in the		
-# "1;2;3" format to an external process, we have replaced the		
-# ";" with "*", so reverse that here so we get it back into the		
-# CMake list format.		
+
+#
+# Make sure we have the needed arguments.
+#
+if (NOT COVERALLS_OUTPUT_FILE)
+	message(FATAL_ERROR "Coveralls: No coveralls output file specified. Please set COVERALLS_OUTPUT_FILE")
+endif()
+
+if (NOT COV_PATH)
+	message(FATAL_ERROR "Coveralls: Missing coverage directory path where gcov files will be generated. Please set COV_PATH")
+endif()
+
+if (NOT COVERAGE_SRCS)
+	message(FATAL_ERROR "Coveralls: Missing the list of source files that we should get the coverage data for COVERAGE_SRCS")
+endif()
+
+if (NOT PROJECT_ROOT)
+	message(FATAL_ERROR "Coveralls: Missing PROJECT_ROOT.")
+endif()
+
+# Since it's not possible to pass a CMake list properly in the
+# "1;2;3" format to an external process, we have replaced the
+# ";" with "*", so reverse that here so we get it back into the
+# CMake list format.
 string(REGEX REPLACE "\\*" ";" COVERAGE_SRCS ${COVERAGE_SRCS})
 
+find_program(GCOV_EXECUTABLE gcov)
+
+if (NOT GCOV_EXECUTABLE)
+	message(FATAL_ERROR "gcov not found! Aborting...")
+endif()
+
+find_package(Git)
+
+# TODO: Add these git things to the coveralls json.
+if (GIT_FOUND)
+	# Branch.
+	execute_process(
+		COMMAND ${GIT_EXECUTABLE} rev-parse --abbrev-ref HEAD
+		WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+		OUTPUT_VARIABLE GIT_BRANCH
+		OUTPUT_STRIP_TRAILING_WHITESPACE
+	)
+
+	macro (git_log_format FORMAT_CHARS VAR_NAME)
+		execute_process(
+			COMMAND ${GIT_EXECUTABLE} log -1 --pretty=format:%${FORMAT_CHARS}
+			WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+			OUTPUT_VARIABLE ${VAR_NAME}
+			OUTPUT_STRIP_TRAILING_WHITESPACE
+		)
+	endmacro()
+
+	git_log_format(an GIT_AUTHOR_EMAIL)
+	git_log_format(ae GIT_AUTHOR_EMAIL)
+	git_log_format(cn GIT_COMMITTER_NAME)
+	git_log_format(ce GIT_COMMITTER_EMAIL)
+	git_log_format(B GIT_COMMIT_MESSAGE)
+
+	message("Git exe: ${GIT_EXECUTABLE}")
+	message("Git branch: ${GIT_BRANCH}")
+	message("Git author: ${GIT_AUTHOR_NAME}")
+	message("Git e-mail: ${GIT_AUTHOR_EMAIL}")
+	message("Git commiter name: ${GIT_COMMITTER_NAME}")
+	message("Git commiter e-mail: ${GIT_COMMITTER_EMAIL}")
+	message("Git commit message: ${GIT_COMMIT_MESSAGE}")
+
+endif()
+
 ############################# Macros #########################################
+
 #
 # This macro converts from the full path format gcov outputs:
 #
