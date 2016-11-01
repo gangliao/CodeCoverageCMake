@@ -136,7 +136,7 @@ endmacro()
 
 # Get the coverage data.
 file(GLOB_RECURSE GCDA_FILES "${COV_PATH}/*.gcda")
-message("GCDA files:")
+message("${COV_PATH}#### GCDA files: ${GCDA_FILES}")
 
 # Get a list of all the object directories needed by gcov
 # (The directories the .gcda files and .o files are found in)
