@@ -14,8 +14,6 @@
 
 INCLUDE(ExternalProject)
 
-add_compile_options(-Wno-deprecated-declarations)
-
 ############################### GLOG ####################################
 ExternalProject_Add(
     glog
@@ -85,7 +83,6 @@ LIST(APPEND external_project_dependencies gflags)
 #########################################################################
 
 ################################# ZLIB ##################################
-
 ExternalProject_Add(
     zlib
     GIT_REPOSITORY "https://github.com/madler/zlib.git"
@@ -100,9 +97,9 @@ ExternalProject_Add(
 SET(ZLIB_INCLUDE "${PROJECT_BINARY_DIR}/include")
 IF(WIN32)
   SET(ZLIB_LIBRARIES "${PROJECT_BINARY_DIR}/lib/zlibstatic.lib")
-ELSE()
+ELSE(WIN32)
   set(ZLIB_LIBRARIES "${PROJECT_BINARY_DIR}/lib/libz.a")
-ENDIF()
+ENDIF(WIN32)
 
 include_directories(${ZLIB_INCLUDE})
 LIST(APPEND external_project_dependencies zlib)
@@ -126,13 +123,15 @@ ExternalProject_Add(
 SET(PROTOBUF_INCLUDE "${PROJECT_BINARY_DIR}/include")
 IF(WIN32)
   SET(PROTOBUF_LIBRARIES
+        "${PROJECT_BINARY_DIR}/lib/libprotobuf-lite.lib"
         "${PROJECT_BINARY_DIR}/lib/libprotobuf.lib"
         "${PROJECT_BINARY_DIR}/lib/libprotoc.lib")
-ELSE()
+ELSE(WIN32)
   SET(PROTOBUF_LIBRARIES
+        "${PROJECT_BINARY_DIR}/lib/libprotobuf-lite.a"
         "${PROJECT_BINARY_DIR}/lib/libprotobuf.a"
         "${PROJECT_BINARY_DIR}/lib/libprotoc.a")
-ENDIF()
+ENDIF(WIN32)
 include_directories(${ZLIB_INCLUDE})
 LIST(APPEND external_project_dependencies protobuf)
 #########################################################################
