@@ -1,6 +1,8 @@
 language: cpp
 install:
+  - sudo apt-get update
   - sudo apt-get install curl
+  - sudo apt-get install cmake
   - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
 addons:
   apt:
