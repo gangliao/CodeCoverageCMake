@@ -116,8 +116,6 @@ ExternalProject_Add(
     DEPENDS zlib
     GIT_REPOSITORY "https://github.com/google/protobuf.git"
     GIT_TAG "v3.0.0"
-    LOG_DOWNLOAD=ON
-    LOG_BUILD=OFF
     CONFIGURE_COMMAND ${CMAKE_COMMAND}
         ${PROJECT_BINARY_DIR}/protobuf/src/protobuf/cmake/
         -Dprotobuf_BUILD_TESTS=OFF
