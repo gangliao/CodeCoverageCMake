@@ -1,7 +1,7 @@
 language: cpp
 install:
   - sudo apt-get install curl
-  - sudo apt-get instal gcc-4.8
+  - sudo apt-get install gcc-4.8
   - sudo apt-get install g++-4.8
 env: COMPILER=g++-4.8
 script:
