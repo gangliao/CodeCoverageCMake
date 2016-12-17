@@ -4,23 +4,34 @@ project(coveralls)
 option(COVERALLS "Turn on coveralls support" OFF)
 option(COVERALLS_UPLOAD "Upload the generated coveralls json" ON)
 
+LIST(APPEND CMAKE_CXX_FLAGS "-std=c++11 -fpic")
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} 
-	${PROJECT_SOURCE_DIR}/cmake)
+    ${PROJECT_SOURCE_DIR}/cmake)
 
 if (COVERALLS)
-	include(Coveralls)
+    include(Coveralls)
 endif()
 
-set(LIB_SRC ${PROJECT_SOURCE_DIR}/src/base.c)
+include(third_party)
+
+set(LIB_SRC ${PROJECT_SOURCE_DIR}/src/base.cc)
 add_library(base ${LIB_SRC})
+
 include_directories(${PROJECT_SOURCE_DIR}/src)
 
 # Add a test for the library.
 enable_testing()
 
 add_executable(base_regress
-               ${PROJECT_SOURCE_DIR}/test/TEST_base.c)
+               ${PROJECT_SOURCE_DIR}/test/TEST_base.cc)
 
-target_link_libraries(base_regress base)
+target_link_libraries(base_regress
+    ${GFLAGS_LIBRARIES}
+    ${GLOG_LIBRARIES}
+    ${GTEST_LIBRARIES}
+    base)
+
+add_dependencies(base_regress ${external_project_dependencies} base)
 
 add_test(base ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/base_regress)
