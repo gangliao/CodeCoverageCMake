@@ -1,8 +1,6 @@
 language: cpp
 install:
-  - sudo apt-get update
   - sudo apt-get install curl
-  - sudo apt-get install cmake
   - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
 addons:
   apt:
@@ -12,6 +10,11 @@ addons:
       - gcc-4.8
       - g++-4.8
       - clang
+    sources:
+      - george-edison55-precise-backports # cmake 3.2.3 / doxygen 1.8.3
+    packages:
+      - cmake
+      - cmake-data
 script:
   - mkdir build && cd build
   - cmake -DCOVERALLS=ON ..

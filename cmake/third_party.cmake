@@ -111,12 +111,12 @@ ENDIF()
 include_directories(${ZLIB_INCLUDE})
 LIST(APPEND external_project_dependencies zlib)
 ############################### Protobuf ################################
-set(PROTOBUF_URL https://github.com/google/protobuf/releases/download/v3.0.0/protobuf-cpp-3.0.0.zip)
 ExternalProject_Add(
     protobuf
     PREFIX ${PROJECT_BINARY_DIR}/protobuf
     DEPENDS zlib
-    URL ${PROTOBUF_URL}
+    GIT_REPOSITORY "https://github.com/google/protobuf.git"
+    GIT_TAG "v3.0.0"
     CONFIGURE_COMMAND ${CMAKE_COMMAND} cmake/ -Dprotobuf_BUILD_TESTS=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON
     CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
     LOG_DOWNLOAD=ON
