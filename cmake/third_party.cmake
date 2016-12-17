@@ -25,7 +25,6 @@ ExternalProject_Add(
     CMAKE_ARGS -DWITH_GFLAGS=OFF
     CMAKE_ARGS -DBUILD_TESTING=OFF
     LOG_DOWNLOAD=ON
-    LOG_INSTALL=ON
 )
 
 SET(GLOG_INCLUDE "${PROJECT_BINARY_DIR}/include")
@@ -47,7 +46,6 @@ ExternalProject_Add(
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
     CMAKE_ARGS -Dgtest_disable_pthreads=ON
     LOG_DOWNLOAD=ON
-    LOG_INSTALL=ON
 )
 
 SET(GTEST_INCLUDE "${PROJECT_BINARY_DIR}/include")
@@ -73,7 +71,6 @@ ExternalProject_Add(
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
     CMAKE_ARGS -DBUILD_TESTING=OFF
     LOG_DOWNLOAD=ON
-    LOG_INSTALL=ON
 )
 
 SET(GFLAGS_INCLUDE "${PROJECT_BINARY_DIR}/include")
@@ -86,9 +83,8 @@ ENDIF(WIN32)
 include_directories(${GFLAGS_INCLUDE})
 LIST(APPEND external_project_dependencies gflags)
 #########################################################################
-if (APPLE)
-    set(CMAKE_MACOSX_RPATH ON)
-endif (APPLE)
+
+################################# ZLIB ##################################
 
 ExternalProject_Add(
     zlib
@@ -98,8 +94,8 @@ ExternalProject_Add(
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
     CMAKE_ARGS -DBUILD_TESTING=OFF
     CMAKE_ARGS -DBUILD_SHARED_LIBS=OFF
+    CMAKE_ARGS -DCMAKE_MACOSX_RPATH=ON
     LOG_DOWNLOAD=ON
-    LOG_INSTALL=ON
 )
 
 SET(ZLIB_INCLUDE "${PROJECT_BINARY_DIR}/include")
@@ -111,6 +107,8 @@ ENDIF()
 
 include_directories(${ZLIB_INCLUDE})
 LIST(APPEND external_project_dependencies zlib)
+#########################################################################
+
 ############################### Protobuf ################################
 ExternalProject_Add(
     protobuf
@@ -118,6 +116,8 @@ ExternalProject_Add(
     DEPENDS zlib
     GIT_REPOSITORY "https://github.com/google/protobuf.git"
     GIT_TAG "v3.0.0"
+    LOG_DOWNLOAD=ON
+    LOG_BUILD=OFF
     CONFIGURE_COMMAND ${CMAKE_COMMAND}
         ${PROJECT_BINARY_DIR}/protobuf/src/protobuf/cmake/
         -Dprotobuf_BUILD_TESTS=OFF
@@ -126,4 +126,16 @@ ExternalProject_Add(
         -DCMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
 )
 
+SET(PROTOBUF_INCLUDE "${PROJECT_BINARY_DIR}/include")
+IF(WIN32)
+  SET(PROTOBUF_LIBRARIES
+        "${PROJECT_BINARY_DIR}/lib/libprotobuf.lib"
+        "${PROJECT_BINARY_DIR}/lib/libprotoc.lib")
+ELSE()
+  SET(PROTOBUF_LIBRARIES
+        "${PROJECT_BINARY_DIR}/lib/libprotobuf.a"
+        "${PROJECT_BINARY_DIR}/lib/libprotoc.a")
+ENDIF()
+include_directories(${ZLIB_INCLUDE})
+LIST(APPEND external_project_dependencies protobuf)
 #########################################################################
