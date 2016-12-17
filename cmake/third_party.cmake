@@ -14,6 +14,10 @@
 
 INCLUDE(ExternalProject)
 
+if (APPLE)
+    set(CMAKE_MACOSX_RPATH ON)
+endif (APPLE)
+
 ############################### GLOG ####################################
 ExternalProject_Add(
     glog
@@ -77,8 +81,6 @@ ExternalProject_Add(
     LOG_INSTALL 1
 )
 
-ExternalProject_Get_Property(gflags SOURCE_DIR)
-
 SET(GFLAGS_INCLUDE "${PROJECT_BINARY_DIR}/include")
 IF(WIN32)
     set(GFLAGS_LIBRARIES "${PROJECT_BINARY_DIR}/lib/gflags.lib")
@@ -90,26 +92,40 @@ include_directories(${GFLAGS_INCLUDE})
 LIST(APPEND external_project_dependencies gflags)
 #########################################################################
 
+ExternalProject_Add(
+    zlib
+    GIT_REPOSITORY "https://github.com/madler/zlib.git"
+    GIT_TAG "v1.2.8"
+    PREFIX ${PROJECT_BINARY_DIR}/zlib
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
+    CMAKE_ARGS -DBUILD_TESTING=OFF
+    CMAKE_ARGS -DBUILD_SHARED_LIBS=OFF
+    UPDATE_COMMAND ""
+    LOG_DOWNLOAD 1
+    LOG_INSTALL 1
+)
+
+SET(ZLIB_INCLUDE "${PROJECT_BINARY_DIR}/include")
+IF(WIN32)
+  SET(ZLIB_LIBRARIES "${PROJECT_BINARY_DIR}/lib/zlibstatic.lib")
+ELSE()
+  set(ZLIB_LIBRARIES "${PROJECT_BINARY_DIR}/lib/libz.a")
+ENDIF()
+
+include_directories(${ZLIB_INCLUDE})
+LIST(APPEND external_project_dependencies zlib)
 ############################### Protobuf ################################
-# ExternalProject_Add(
-#     protobuf
-#     PREFIX ${PROJECT_BINARY_DIR}/protobuf
-#     DEPENDS zlib
-#     GIT_REPOSITORY ${PROTOBUF_URL}
-#     GIT_TAG ${PROTOBUF_TAG}
-#     DOWNLOAD_DIR "${DOWNLOAD_LOCATION}"
-#     BUILD_IN_SOURCE 1
-#     SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/protobuf/src/protobuf
-#     CONFIGURE_COMMAND ${CMAKE_COMMAND} cmake/
-#         -Dprotobuf_BUILD_TESTS=OFF
-#         -DCMAKE_POSITION_INDEPENDENT_CODE=ON
-#         -DZLIB_ROOT=${ZLIB_INSTALL}
-#         ${PROTOBUF_ADDITIONAL_CMAKE_OPTIONS}
-#     INSTALL_COMMAND ""
-#     CMAKE_CACHE_ARGS
-#         -DCMAKE_BUILD_TYPE:STRING=Release
-#         -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF
-#         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
-#         -DZLIB_ROOT:STRING=${ZLIB_INSTALL}
-# )
+set(PROTOBUF_URL https://github.com/google/protobuf/releases/download/v3.0.0/protobuf-cpp-3.0.0.zip)
+ExternalProject_Add(
+    protobuf
+    PREFIX ${PROJECT_BINARY_DIR}/protobuf
+    DEPENDS zlib
+    URL ${PROTOBUF_URL}
+    CONFIGURE_COMMAND ${CMAKE_COMMAND} cmake/ -Dprotobuf_BUILD_TESTS=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+    INSTALL_COMMAND ""
+    CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
+    UPDATE_COMMAND ""
+    LOG_DOWNLOAD=ON
+    LOG_INSTALL=ON 
+)
 #########################################################################
