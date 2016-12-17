@@ -126,11 +126,13 @@ IF(WIN32)
         "${PROJECT_BINARY_DIR}/lib/libprotobuf-lite.lib"
         "${PROJECT_BINARY_DIR}/lib/libprotobuf.lib"
         "${PROJECT_BINARY_DIR}/lib/libprotoc.lib")
+  SET(PROTOBUF_PROTOC_EXECUTABLE "${PROJECT_BINARY_DIR}/bin/protoc.exe")
 ELSE(WIN32)
   SET(PROTOBUF_LIBRARIES
         "${PROJECT_BINARY_DIR}/lib/libprotobuf-lite.a"
         "${PROJECT_BINARY_DIR}/lib/libprotobuf.a"
         "${PROJECT_BINARY_DIR}/lib/libprotoc.a")
+  SET(PROTOBUF_PROTOC_EXECUTABLE "${PROJECT_BINARY_DIR}/bin/protoc")
 ENDIF(WIN32)
 include_directories(${ZLIB_INCLUDE})
 LIST(APPEND external_project_dependencies protobuf)
