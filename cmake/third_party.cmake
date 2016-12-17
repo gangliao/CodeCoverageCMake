@@ -14,9 +14,7 @@
 
 INCLUDE(ExternalProject)
 
-if (APPLE)
-    set(CMAKE_MACOSX_RPATH ON)
-endif (APPLE)
+add_compile_options(-Wno-deprecated-declarations)
 
 ############################### GLOG ####################################
 ExternalProject_Add(
@@ -88,6 +86,9 @@ ENDIF(WIN32)
 include_directories(${GFLAGS_INCLUDE})
 LIST(APPEND external_project_dependencies gflags)
 #########################################################################
+if (APPLE)
+    set(CMAKE_MACOSX_RPATH ON)
+endif (APPLE)
 
 ExternalProject_Add(
     zlib
@@ -117,9 +118,12 @@ ExternalProject_Add(
     DEPENDS zlib
     GIT_REPOSITORY "https://github.com/google/protobuf.git"
     GIT_TAG "v3.0.0"
-    CONFIGURE_COMMAND ${CMAKE_COMMAND} cmake/ -Dprotobuf_BUILD_TESTS=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON
-    CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
-    LOG_DOWNLOAD=ON
-    LOG_INSTALL=ON 
+    CONFIGURE_COMMAND ${CMAKE_COMMAND}
+        ${PROJECT_BINARY_DIR}/protobuf/src/protobuf/cmake/
+        -Dprotobuf_BUILD_TESTS=OFF
+        -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+        -DCMAKE_BUILD_TYPE=Release
+        -DCMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
 )
+
 #########################################################################
