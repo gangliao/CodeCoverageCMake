@@ -24,6 +24,7 @@ ExternalProject_Add(
     PREFIX ${GTEST_SOURCES_DIR}
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${GTEST_INSTALL_DIR}
     CMAKE_ARGS -DBUILD_GMOCK=ON
+    CMAKE_ARGS -Dgtest_disable_pthreads=ON
     CMAKE_ARGS -Dgtest_force_shared_crt=ON
     LOG_DOWNLOAD=ON
     UPDATE_COMMAND ""
