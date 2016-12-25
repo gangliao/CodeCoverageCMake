@@ -13,7 +13,18 @@ if (COVERALLS)
     include(Coveralls)
 endif()
 
-include(third_party)
+################### third_party Dependencies ######################
+include(external/gflags)
+include(external/glog)
+include(external/gtest)
+include(external/zlib)
+include(external/protobuf)
+include(external/openblas)
+include(external/python)
+#include(external/numpy)
+include(external/swig)
+#include(external/warpctc)
+
 
 set(LIB_SRC ${PROJECT_SOURCE_DIR}/src/base.cc)
 add_library(base ${LIB_SRC})
