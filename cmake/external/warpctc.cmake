@@ -19,9 +19,10 @@ SET(WARPCTC_INSTALL_DIR ${PROJECT_BINARY_DIR}/warpctc)
 
 ExternalProject_Add(
     warpctc
-    GIT_REPOSITORY "https://github.com/baidu-research/warp-ctc.git"
-    PREFIX ${WARPCTC_SOURCES_DIR}
-    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${WARPCTC_INSTALL_DIR}
+    GIT_REPOSITORY  "https://github.com/gangliao/warp-ctc.git"
+    PREFIX          ${WARPCTC_SOURCES_DIR}
+    CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${WARPCTC_INSTALL_DIR}
+    CMAKE_ARGS      -DWITH_GPU=OFF
 )
 
 SET(WARPCTC_INCLUDE_DIR "${WARP_INSTALL_DIR}/include" CACHE PATH "Warp-ctc Directory" FORCE)

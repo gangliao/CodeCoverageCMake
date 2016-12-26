@@ -27,7 +27,7 @@ if(MSVC)
 endif()
 
 ExternalProject_Add(python
-  URL       "https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tgz"
+  URL       "http://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tgz"
   URL_MD5   "d7547558fd673bd9d38e2108c6b42521"
   PREFIX    ${PYTHON_SOURCES_DIR}
   ${EXTERNAL_PROJECT_OPTIONAL_ARGS}

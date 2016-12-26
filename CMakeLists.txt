@@ -23,7 +23,7 @@ include(external/openblas)
 include(external/python)
 include(external/numpy)
 include(external/swig)
-#include(external/warpctc)
+include(external/warpctc)
 
 
 set(LIB_SRC ${PROJECT_SOURCE_DIR}/src/base.cc)
