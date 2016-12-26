@@ -2,7 +2,6 @@ language: cpp
 install:
   - sudo apt-get install curl
   - sudo apt-get install openssl
-  - sudo apt-get install libiomp5
 matrix:
   include:
     - os: linux
