@@ -14,10 +14,10 @@ if (COVERALLS)
 endif()
 
 ################### third_party Dependencies ######################
+include(external/zlib)
 include(external/gflags)
 include(external/glog)
 include(external/gtest)
-include(external/zlib)
 include(external/protobuf)
 include(external/openblas)
 include(external/python)
