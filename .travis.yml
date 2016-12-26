@@ -2,6 +2,9 @@ language: cpp
 install:
   - sudo apt-get install curl
   - sudo apt-get install openssl libssl-dev
+  - CMAKE_URL="http://www.cmake.org/files/v3.4/cmake-3.4.3-Linux-x86_64.tar.gz"
+    mkdir cmake && travis_retry wget --no-check-certificate --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C cmake
+    export PATH=${DEPS_DIR}/cmake/bin:${PATH}
 matrix:
   include:
     - os: linux
@@ -30,6 +33,7 @@ matrix:
             - cmake-data
       env: COMPILER=clang++-3.8
 script:
+  - cmake --version
   - export CXX=$COMPILER;
   - mkdir build && cd build
   - cmake -DCOVERALLS=ON ..
