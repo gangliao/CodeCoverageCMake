@@ -16,7 +16,6 @@ INCLUDE(ExternalProject)
 
 SET(PYTHON_SOURCES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/python)
 SET(PYTHON_INSTALL_DIR ${PROJECT_BINARY_DIR}/python)
-set(PYTHON_VERSION "2.7.10")
 
 if(MSVC)
   list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
@@ -25,19 +24,6 @@ if(MSVC)
       -P ${CMAKE_CURRENT_LIST_DIR}/PythonPatch.cmake
     )
 endif()
-
-set("CMAKE_USE_OPENSSL" "ON" CACHE INTERNAL "")
-
-ExternalProject_Add(python
-  URL       "http://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tgz"
-  URL_MD5   "d7547558fd673bd9d38e2108c6b42521"
-  PREFIX    ${PYTHON_SOURCES_DIR}
-  ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND     ""
-  INSTALL_COMMAND   ""
-  UPDATE_COMMAND    ""
-)
 
 if(APPLE)
   list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_ARGS
@@ -56,10 +42,10 @@ else()
     -DCMAKE_BUILD_TYPE:STRING=Release)
 endif()
 
-ExternalProject_Add(python_build
+ExternalProject_Add(python
   GIT_REPOSITORY    "https://github.com/python-cmake-buildsystem/python-cmake-buildsystem.git"
   GIT_TAG           "ed5f9bcee540e47f82fa17f8360b820591aa6d66"
-  PREFIX            ${PYTHON_SOURCES_DIR}/python_build
+  PREFIX            ${PYTHON_SOURCES_DIR}
   UPDATE_COMMAND    ""
   CMAKE_CACHE_ARGS
     -DCMAKE_INSTALL_PREFIX:PATH=${PYTHON_INSTALL_DIR}
@@ -69,12 +55,11 @@ ExternalProject_Add(python_build
     -DZLIB_ROOT:FILEPATH=${ZLIB_ROOT}
     -DZLIB_INCLUDE_DIR:PATH=${ZLIB_INCLUDE_DIR}
     -DZLIB_LIBRARY:FILEPATH=${ZLIB_LIBRARIES}
-    -DSRC_DIR:PATH=${PYTHON_SOURCES_DIR}/src/python
-    -DDOWNLOAD_SOURCES:BOOL=OFF
+    -DDOWNLOAD_SOURCES:BOOL=ON
     -DINSTALL_WINDOWS_TRADITIONAL:BOOL=OFF
     ${EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS}
   ${EXTERNAL_PROJECT_OPTIONAL_CMAKE_ARGS}
-  DEPENDS python zlib
+  DEPENDS zlib
 )
 
 set(_python_DIR ${PYTHON_INSTALL_DIR})
