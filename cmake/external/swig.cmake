@@ -65,7 +65,7 @@
                 --with-python=${PYTHON_EXECUTABLE}
             BUILD_COMMAND cd ${SWIG_SOURCES_DIR}/src/swig && make
             INSTALL_COMMAND cd ${SWIG_SOURCES_DIR}/src/swig && make install
-            DEPENDS pcre python_build
+            DEPENDS pcre python
         )
 
         set(SWIG_DIR ${SWIG_INSTALL_DIR}/share/swig/${SWIG_TARGET_VERSION} CACHE FILEPATH "SWIG Directory" FORCE)

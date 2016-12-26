@@ -29,7 +29,7 @@ ExternalProject_Add(setuptools
     CONFIGURE_COMMAND   ""
     INSTALL_COMMAND     ""
     BUILD_COMMAND       ${PYTHON_EXECUTABLE} setup.py install
-    DEPENDS             python_build zlib
+    DEPENDS             python zlib
 )
 
 ExternalProject_Add(cython
@@ -41,7 +41,7 @@ ExternalProject_Add(cython
   PATCH_COMMAND         ""
   INSTALL_COMMAND       ""
   BUILD_COMMAND         ${PYTHON_EXECUTABLE} setup.py install
-  DEPENDS               python_build
+  DEPENDS               python
 )
 
 ExternalProject_Add(numpy
@@ -53,5 +53,5 @@ ExternalProject_Add(numpy
     BUILD_COMMAND       ${PYTHON_EXECUTABLE} setup.py build
     INSTALL_COMMAND     ${PYTHON_EXECUTABLE} setup.py install
     BUILD_IN_SOURCE     1
-    DEPENDS python_build setuptools cython
+    DEPENDS python setuptools cython
 )
