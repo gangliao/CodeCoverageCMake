@@ -26,6 +26,8 @@ if(MSVC)
     )
 endif()
 
+set("CMAKE_USE_OPENSSL" "ON" CACHE INTERNAL "")
+
 ExternalProject_Add(python
   URL       "http://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tgz"
   URL_MD5   "d7547558fd673bd9d38e2108c6b42521"
