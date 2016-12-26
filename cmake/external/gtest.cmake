@@ -19,28 +19,28 @@ SET(GTEST_INSTALL_DIR ${PROJECT_BINARY_DIR}/gtest)
 
 ExternalProject_Add(
     gtest
-    GIT_REPOSITORY "https://github.com/google/googletest.git"
-    GIT_TAG "release-1.8.0"
-    PREFIX ${GTEST_SOURCES_DIR}
-    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${GTEST_INSTALL_DIR}
-    CMAKE_ARGS -DBUILD_GMOCK=ON
-    CMAKE_ARGS -Dgtest_disable_pthreads=ON
-    CMAKE_ARGS -Dgtest_force_shared_crt=ON
-    LOG_DOWNLOAD=ON
-    UPDATE_COMMAND ""
+    GIT_REPOSITORY  "https://github.com/google/googletest.git"
+    GIT_TAG         "release-1.8.0"
+    PREFIX          ${GTEST_SOURCES_DIR}
+    CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX:PATH=${GTEST_INSTALL_DIR}
+    CMAKE_ARGS      -DBUILD_GMOCK=ON
+    CMAKE_ARGS      -Dgtest_disable_pthreads=ON
+    CMAKE_ARGS      -Dgtest_force_shared_crt=ON
+    LOG_DOWNLOAD    =ON
+    UPDATE_COMMAND  ""
 )
 
-SET(GTEST_INCLUDE_DIR "${GTEST_INSTALL_DIR}/include")
+SET(GTEST_INCLUDE_DIR "${GTEST_INSTALL_DIR}/include" CACHE PATH "gtest include directory." FORCE)
 INCLUDE_DIRECTORIES(${GTEST_INCLUDE_DIR})
 
 IF(WIN32)
     set(GTEST_LIBRARIES
         "${GTEST_INSTALL_DIR}/lib/gtest.lib"
-        "${GTEST_INSTALL_DIR}/lib/gtest_main.lib")
+        "${GTEST_INSTALL_DIR}/lib/gtest_main.lib" CACHE FILEPATH "gtest libraries." FORCE)
 ELSE(WIN32)
     set(GTEST_LIBRARIES
         "${GTEST_INSTALL_DIR}/lib/libgtest.a"
-        "${GTEST_INSTALL_DIR}/lib/libgtest_main.a")
+        "${GTEST_INSTALL_DIR}/lib/libgtest_main.a" CACHE FILEPATH "gtest libraries." FORCE)
 ENDIF(WIN32)
 
 ENABLE_TESTING()

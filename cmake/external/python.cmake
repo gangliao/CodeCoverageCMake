@@ -15,28 +15,82 @@
 INCLUDE(ExternalProject)
 
 SET(PYTHON_SOURCES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/python)
-SET(PYTHON_INSTALL_DIR ${PROJECT_BINARY_DIR}/third_party/python)
+SET(PYTHON_INSTALL_DIR ${PROJECT_BINARY_DIR}/python)
+set(PYTHON_VERSION "2.7.10")
 
-set(PYTHON_CONFIGURE_CMD ./configure --prefix=${PYTHON_INSTALL_DIR} --enable-shared --with-threads --without-pymalloc)
+if(MSVC)
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
+    PATCH_COMMAND ${CMAKE_COMMAND}
+      -DPYTHON_SRC_DIR:PATH=${_python_SOURCE_DIR}
+      -P ${CMAKE_CURRENT_LIST_DIR}/PythonPatch.cmake
+    )
+endif()
+
+ExternalProject_Add(python
+  URL       "https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tgz"
+  URL_MD5   "d7547558fd673bd9d38e2108c6b42521"
+  PREFIX    ${PYTHON_SOURCES_DIR}
+  ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND     ""
+  INSTALL_COMMAND   ""
+  UPDATE_COMMAND    ""
+)
 
 if(APPLE)
-    # See http://bugs.python.org/issue21381
-    # The interpreter crashes when MACOSX_DEPLOYMENT_TARGET=10.7 due to the increased stack size.
-    set(PYTHON_PATCH_CMD sed -i".bak" "9271,9271d" <SOURCE_DIR>/configure)
-    # OS X 10.11 removed OpenSSL. Brew now refuses to link so we need to manually tell Python's build system
-    # to use the right linker flags.
-    set(PYTHON_CONFIGURE_CMD CPPFLAGS=-I/usr/local/opt/openssl/include LDFLAGS=-L/usr/local/opt/openssl/lib ${PYTHON_CONFIGURE_CMD})
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_ARGS
+    -DCMAKE_BUILD_WITH_INSTALL_RPATH:BOOL=ON
+    )
 endif()
+
+set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
+
+# Force Python build to "Release".
+if(CMAKE_CONFIGURATION_TYPES)
+  set(SAVED_CMAKE_CFG_INTDIR ${CMAKE_CFG_INTDIR})
+  set(CMAKE_CFG_INTDIR "Release")
+else()
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
+    -DCMAKE_BUILD_TYPE:STRING=Release)
+endif()
+
+ExternalProject_Add(python_build
+  GIT_REPOSITORY    "https://github.com/python-cmake-buildsystem/python-cmake-buildsystem.git"
+  GIT_TAG           "ed5f9bcee540e47f82fa17f8360b820591aa6d66"
+  PREFIX            ${PYTHON_SOURCES_DIR}/python_build
+  UPDATE_COMMAND    ""
+  CMAKE_CACHE_ARGS
+    -DCMAKE_INSTALL_PREFIX:PATH=${PYTHON_INSTALL_DIR}
+    -DBUILD_SHARED:BOOL=ON
+    -DBUILD_STATIC:BOOL=OFF
+    -DUSE_SYSTEM_LIBRARIES:BOOL=OFF
+    -DZLIB_ROOT:FILEPATH=${ZLIB_ROOT}
+    -DZLIB_INCLUDE_DIR:PATH=${ZLIB_INCLUDE_DIR}
+    -DZLIB_LIBRARY:FILEPATH=${ZLIB_LIBRARIES}
+    -DSRC_DIR:PATH=${PYTHON_SOURCES_DIR}/src/python
+    -DDOWNLOAD_SOURCES:BOOL=OFF
+    -DINSTALL_WINDOWS_TRADITIONAL:BOOL=OFF
+    ${EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS}
+  ${EXTERNAL_PROJECT_OPTIONAL_CMAKE_ARGS}
+  DEPENDS python zlib
+)
+
+set(_python_DIR ${PYTHON_INSTALL_DIR})
 
 if(UNIX)
-    # Set a proper RPATH so everything depending on Python does not need LD_LIBRARY_PATH
-    set(PYTHON_CONFIGURE_CMD LDFLAG=-rpath=${PYTHON_INSTALL_DIR}/lib ${PYTHON_CONFIGURE_CMD})
+  set(_python_IMPORT_SUFFIX so)
+  if(APPLE)
+    set(_python_IMPORT_SUFFIX dylib)
+  endif()
+  set(PYTHON_INCLUDE_DIR "${PYTHON_INSTALL_DIR}/include/python2.7" CACHE PATH "Python include dir" FORCE)
+  set(PYTHON_LIBRARY "${PYTHON_INSTALL_DIR}/lib/libpython2.7.${_python_IMPORT_SUFFIX}" CACHE FILEPATH "Python library" FORCE)
+  set(PYTHON_EXECUTABLE ${PYTHON_INSTALL_DIR}/bin/python CACHE FILEPATH "Python executable" FORCE)
+  set(PY_SITE_PACKAGES_PATH "${PYTHON_INSTALL_DIR}/lib/python2.7/site-packages" CACHE PATH "Python site-packages path" FORCE)
+elseif(WIN32)
+  set(PYTHON_INCLUDE_DIR "${PYTHON_INSTALL_DIR}/include" CACHE PATH "Python include dir" FORCE)
+  set(PYTHON_LIBRARY "${PYTHON_INSTALL_DIR}/libs/python27.lib" CACHE FILEPATH "Python library" FORCE)
+  set(PYTHON_EXECUTABLE "${PYTHON_INSTALL_DIR}/bin/python.exe" CACHE FILEPATH "Python executable" FORCE)
+  set(PY_SITE_PACKAGES_PATH "${PYTHON_INSTALL_DIR}/Lib/site-packages" CACHE PATH "Python site-packages path" FORCE)
+else()
+  message(FATAL_ERROR "Unknown system !")
 endif()
-
-ExternalProject_Add(
-    python
-    URL https://www.python.org/ftp/python/2.7.12/Python-2.7.12.tgz
-    PREFIX ${PYTHON_SOURCES_DIR}
-    PATCH_COMMAND ${PYTHON_PATCH_CMD}
-    CONFIGURE_COMMAND ${PYTHON_CONFIGURE_CMD}
-)

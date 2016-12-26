@@ -21,24 +21,24 @@ SET(CBLAS_INSTALL_DIR ${PROJECT_BINARY_DIR}/openblas)
 
 ExternalProject_Add(
     openblas
-    GIT_REPOSITORY https://github.com/xianyi/OpenBLAS.git
-    GIT_TAG v0.2.19
-    SOURCE_DIR ${CBLAS_SOURCES_DIR}
-    INSTALL_DIR ${CBLAS_INSTALL_DIR}
-    BUILD_IN_SOURCE 1
-    UPDATE_COMMAND ""
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND cd <SOURCE_DIR> && $(MAKE) -j4
-    INSTALL_COMMAND cd <SOURCE_DIR> && $(MAKE) install PREFIX=<INSTALL_DIR>
+    GIT_REPOSITORY      "https://github.com/xianyi/OpenBLAS.git"
+    GIT_TAG             v0.2.19
+    PREFIX              ${CBLAS_SOURCES_DIR}
+    INSTALL_DIR         ${CBLAS_INSTALL_DIR}
+    BUILD_IN_SOURCE     1
+    UPDATE_COMMAND      ""
+    CONFIGURE_COMMAND   ""
+    BUILD_COMMAND       cd ${CBLAS_SOURCES_DIR}/src/openblas && make -j4
+    INSTALL_COMMAND     cd ${CBLAS_SOURCES_DIR}/src/openblas && make install PREFIX=<INSTALL_DIR>
 )
 
-SET(CBLAS_INCLUDE_DIR "${CBLAS_INSTALL_DIR}/include")
+SET(CBLAS_INCLUDE_DIR "${CBLAS_INSTALL_DIR}/include" CACHE PATH "openblas include directory." FORCE)
 INCLUDE_DIRECTORIES(${CBLAS_INCLUDE_DIR})
 
 IF(WIN32)
-    set(CBLAS_LIBRARIES "${CBLAS_INSTALL_DIR}/lib/openblas.lib")
+    set(CBLAS_LIBRARIES "${CBLAS_INSTALL_DIR}/lib/openblas.lib" CACHE FILEPATH "openblas library." FORCE)
 ELSE(WIN32)
-    set(CBLAS_LIBRARIES "${CBLAS_INSTALL_DIR}/lib/libopenblas.a")
+    set(CBLAS_LIBRARIES "${CBLAS_INSTALL_DIR}/lib/libopenblas.a" CACHE FILEPATH "openblas library" FORCE)
 ENDIF(WIN32)
 
 LIST(APPEND external_project_dependencies openblas)

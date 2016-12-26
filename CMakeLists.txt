@@ -21,7 +21,7 @@ include(external/zlib)
 include(external/protobuf)
 include(external/openblas)
 include(external/python)
-#include(external/numpy)
+include(external/numpy)
 include(external/swig)
 #include(external/warpctc)
 

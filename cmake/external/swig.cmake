@@ -27,12 +27,12 @@
     IF(WIN32)
         # swig.exe available as pre-built binary on Windows:
         ExternalProject_Add(swig
-            URL http://prdownloads.sourceforge.net/swig/swigwin-${SWIG_TARGET_VERSION}.zip
+            URL     http://prdownloads.sourceforge.net/swig/swigwin-${SWIG_TARGET_VERSION}.zip
             URL_MD5 ${SWIG_DOWNLOAD_WIN_MD5}
             SOURCE_DIR ${SWIG_SOURCES_DIR}
-            CONFIGURE_COMMAND ""
-            BUILD_COMMAND ""
-            INSTALL_COMMAND ""
+            CONFIGURE_COMMAND   ""
+            BUILD_COMMAND       ""
+            INSTALL_COMMAND     ""
         )
         SET(SWIG_DIR ${SWIG_SOURCES_DIR} CACHE FILEPATH "SWIG Directory" FORCE)
         SET(SWIG_EXECUTABLE ${SWIG_SOURCES_DIR}/swig.exe  CACHE FILEPATH "SWIG Executable" FORCE)
@@ -40,23 +40,10 @@
     ELSE(WIN32)
         # From PCRE configure
         ExternalProject_Add(pcre
-            URL http://downloads.sourceforge.net/project/pcre/pcre/8.36/pcre-8.36.tar.gz
-            URL_MD5 ff7b4bb14e355f04885cf18ff4125c98
+            SVN_REPOSITORY svn://vcs.exim.org/pcre/code/trunk
             PREFIX ${SWIG_SOURCES_DIR}/pcre
-            CONFIGURE_COMMAND
-            env
-                "CC=${CMAKE_C_COMPILER} ${CMAKE_C_COMPILER_ARG1}"
-                "CFLAGS=${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_RELEASE}"
-                "LDFLAGS=$ENV{LDFLAGS}"
-                "LIBS=$ENV{LIBS}"
-                "CPPFLAGS=$ENV{CPPFLAGS}"
-                "CXX=${CMAKE_CXX_COMPILER} ${CMAKE_CXX_COMPILER_ARG1}"
-                "CXXFLAGS=${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}"
-                "CPP=$ENV{CPP}"
-                "CXXPP=$ENV{CXXPP}"
-            ../pcre/configure
-            --prefix=${SWIG_INSTALL_DIR}/pcre
-            --enable-shared=no
+            UPDATE_COMMAND ""
+            CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${SWIG_INSTALL_DIR}/pcre
         )
 
         # swig uses bison find it by cmake and pass it down
@@ -64,25 +51,21 @@
 
         # From SWIG configure
         ExternalProject_Add(swig
-            URL http://prdownloads.sourceforge.net/swig/swig-${SWIG_TARGET_VERSION}.tar.gz
-            URL_MD5 ${SWIG_DOWNLOAD_SRC_MD5}
-            PREFIX ${SWIG_SOURCES_DIR}
-            CONFIGURE_COMMAND
-            env
-                "CC=${CMAKE_C_COMPILER} ${CMAKE_C_COMPILER_ARG1}"
-                "CFLAGS=${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_RELEASE}"
-                "LDFLAGS=$ENV{LDFLAGS}"
-                "LIBS=$ENV{LIBS}"
-                "CPPFLAGS=$ENV{CPPFLAGS}"
-                "CXX=${CMAKE_CXX_COMPILER} ${CMAKE_CXX_COMPILER_ARG1}"
-                "CXXFLAGS=${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}"
-                "CPP=$ENV{CPP}"
-                "YACC=${BISON_EXECUTABLE}"
-                "YFLAGS=${BISON_FLAGS}"
-            ../swig/configure
+            URL     https://github.com/swig/swig/archive/rel-3.0.10.tar.gz
+            PREFIX  ${SWIG_SOURCES_DIR}
+            UPDATE_COMMAND ""
+            CONFIGURE_COMMAND cd ${SWIG_SOURCES_DIR}/src/swig && ./autogen.sh
+            CONFIGURE_COMMAND cd ${SWIG_SOURCES_DIR}/src/swig &&
+            env "PCRE_LIBS=${SWIG_INSTALL_DIR}/pcre/lib/libpcre.a \
+                ${SWIG_INSTALL_DIR}/pcre/lib/libpcrecpp.a \
+                ${SWIG_INSTALL_DIR}/pcre/lib/libpcreposix.a"
+            ./configure
                 --prefix=${SWIG_INSTALL_DIR}
                 --with-pcre-prefix=${SWIG_INSTALL_DIR}/pcre
-            DEPENDS pcre
+                --with-python=${PYTHON_EXECUTABLE}
+            BUILD_COMMAND cd ${SWIG_SOURCES_DIR}/src/swig && make
+            INSTALL_COMMAND cd ${SWIG_SOURCES_DIR}/src/swig && make install
+            DEPENDS pcre python_build
         )
 
         set(SWIG_DIR ${SWIG_INSTALL_DIR}/share/swig/${SWIG_TARGET_VERSION} CACHE FILEPATH "SWIG Directory" FORCE)
