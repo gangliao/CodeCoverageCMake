@@ -4,7 +4,7 @@ project(coveralls)
 option(COVERALLS "Turn on coveralls support" OFF)
 option(COVERALLS_UPLOAD "Upload the generated coveralls json" ON)
 
-LIST(APPEND CMAKE_CXX_FLAGS "-std=c++11 -fpic")
+LIST(APPEND CMAKE_CXX_FLAGS "-std=c++11 -fPIC")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} 
     ${PROJECT_SOURCE_DIR}/cmake)
