@@ -40,7 +40,7 @@
     ELSE(WIN32)
         # From PCRE configure
         ExternalProject_Add(pcre
-            SVN_REPOSITORY svn://vcs.exim.org/pcre/code/trunk
+            GIT_REPOSITORY https://github.com/svn2github/pcre.git
             PREFIX ${SWIG_SOURCES_DIR}/pcre
             UPDATE_COMMAND ""
             CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${SWIG_INSTALL_DIR}/pcre
