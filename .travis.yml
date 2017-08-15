@@ -37,6 +37,7 @@ script:
   - cmake -DCOVERALLS=ON ..
   - make
   - make coveralls
+  - cat /home/travis/build/gangliao/CodeCoverageCMake/build/coveralls.json
 notifications:
   email:
     on_success: change
