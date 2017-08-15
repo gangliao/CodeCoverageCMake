@@ -34,7 +34,9 @@ target_link_libraries(base_regress
     glog
     gflags
     gtest
-    base)
+    base
+    -lpthread)
+
 
 add_dependencies(base_regress ${external_project_dependencies} base)
 
