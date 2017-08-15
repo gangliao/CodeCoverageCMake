@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-IF(WITH_TESTING)
-ENABLE_TESTING()
 INCLUDE(ExternalProject)
 
 SET(GTEST_SOURCES_DIR ${THIRD_PARTY_PATH}/gtest)
@@ -37,7 +35,6 @@ ENDIF(WIN32)
 ExternalProject_Add(
     extern_gtest
     ${EXTERNAL_PROJECT_LOG_ARGS}
-    DEPENDS         ${GTEST_DEPENDS}
     GIT_REPOSITORY  "https://github.com/google/googletest.git"
     GIT_TAG         "release-1.8.0"
     PREFIX          ${GTEST_SOURCES_DIR}
@@ -66,4 +63,3 @@ SET_PROPERTY(TARGET gtest_main PROPERTY IMPORTED_LOCATION ${GTEST_MAIN_LIBRARIES
 ADD_DEPENDENCIES(gtest_main extern_gtest)
 
 LIST(APPEND external_project_dependencies gtest gtest_main)
-ENDIF(WITH_TESTING)
