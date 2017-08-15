@@ -2,7 +2,6 @@ language: cpp
 install:
   - sudo apt-get install curl
   - sudo apt-get install openssl libssl-dev
-  - wget https://cmake.org/files/v3.7/cmake-3.7.0.tar.gz && tar xzvf cmake-3.7.0.tar.gz && cd cmake-3.7.0 && ./configure --system-curl && make && make install
 
 matrix:
   include:
