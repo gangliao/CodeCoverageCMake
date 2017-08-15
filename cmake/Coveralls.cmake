@@ -53,7 +53,7 @@ function(code_coverage _COVERAGE_SRCS _COVERALLS_UPLOAD _CMAKE_SCRIPT_PATH)
                     https://coveralls.io/api/v1/jobs
             DEPENDS coveralls_generate
             WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
-            COMMENT "Coveralls: uploading coveralls output...")
+            COMMENT "Coveralls: uploading coveralls output... ${CURL_EXECUTABLE} -S -F json_file=@${COVERALLS_FILE} https://coveralls.io/api/v1/jobs")
 
         add_custom_target(coveralls DEPENDS coveralls_upload)
     else()
