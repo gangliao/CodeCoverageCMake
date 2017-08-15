@@ -46,6 +46,7 @@ function(code_coverage _COVERAGE_SRCS _COVERALLS_UPLOAD _CMAKE_SCRIPT_PATH)
     if (_COVERALLS_UPLOAD)
         message("COVERALLS UPLOAD: ON")
         # Upload the JSON to coveralls
+        message("${CURL_EXECUTABLE} -S -F json_file=@${COVERALLS_FILE} https://coveralls.io/api/v1/jobs")
         add_custom_target(coveralls_upload
             COMMAND ${CURL_EXECUTABLE}
                     -S -F json_file=@${COVERALLS_FILE}
