@@ -9,6 +9,12 @@ LIST(APPEND CMAKE_CXX_FLAGS "-std=c++11 -fPIC")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} 
     ${PROJECT_SOURCE_DIR}/cmake)
 
+set(THIRD_PARTY_PATH ${PROJECT_BINARY_DIR})
+
+include(gtest)
+include(gflags)
+include(glog)
+
 if (COVERALLS)
     include(Coveralls)
 endif()
@@ -25,9 +31,9 @@ add_executable(base_regress
                ${PROJECT_SOURCE_DIR}/test/TEST_base.cc)
 
 target_link_libraries(base_regress
-    ${GFLAGS_LIBRARIES}
-    ${GLOG_LIBRARIES}
-    ${GTEST_LIBRARIES}
+    glog
+    gflags
+    gtest
     base)
 
 add_dependencies(base_regress ${external_project_dependencies} base)
